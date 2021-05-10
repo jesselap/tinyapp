@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/jesselap/tinyapp/issues"
   },
-  "homepage": "https://github.com/jesselap/tinyapp#readme"
+  "homepage": "https://github.com/jesselap/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
