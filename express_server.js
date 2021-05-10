@@ -5,7 +5,13 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 function generateRandomString() {
-
+  let randomString = [];
+  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+  let length = characters.length;
+  for (let i = 0; i < 6; i++) {
+    randomString.push(characters.charAt(Math.floor(Math.random() * length)));
+  }
+  return randomString.join('');
 }
 
 const urlDatabase = {
@@ -41,12 +47,20 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+  let newShort = generateRandomString();
+  urlDatabase[newShort] = req.body.longURL
+  res.redirect(`/urls/${newShort}`)
+});
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  console.log(longURL);
+  if (longURL.includes('http')) {
+    res.redirect(`${longURL}`);
+  } else {
+    res.send('Error: Cannot connect');
+  }
 })
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
