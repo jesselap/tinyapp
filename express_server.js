@@ -59,6 +59,13 @@ app.get("/u/:shortURL", (req, res) => {
   } else {
     res.send('Error: Cannot connect');
   }
+});
+app.post('/urls/:id/delete', (req, res) => {
+  const { id } = req.params;
+
+  delete urlDatabase[id];
+
+  res.redirect('/urls');
 })
 
 app.listen(PORT, () => {
