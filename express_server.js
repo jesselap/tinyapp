@@ -60,13 +60,26 @@ app.get("/u/:shortURL", (req, res) => {
     res.send('Error: Cannot connect');
   }
 });
+app.get('/urls/:id/edit', (req, res) => {
+  const { id } = req.params;
+
+  const templateVars = { urlId: id, longURL: urlDatabase[id] };
+
+  res.render('urls_show', templateVars);
+});
+app.post('/urls/:id', (req, res) => {
+  const { id } = req.params;
+  const { longURL } = req.body;
+  urlDatabase[id] = longURL;
+  res.redirect('/urls');
+})
 app.post('/urls/:id/delete', (req, res) => {
   const { id } = req.params;
 
   delete urlDatabase[id];
 
   res.redirect('/urls');
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
