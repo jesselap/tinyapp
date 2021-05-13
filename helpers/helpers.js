@@ -1,23 +1,23 @@
 const bcrypt = require("bcrypt");
 
-const userExists = (email, users) => {
+const fetchUserByEmail = (email, users) => {
   for (let user in users) {
     if (users[user].email === email) {
-      return true;
+      return user;
     }
   }
-  return false;
+  return undefined;
 };
 
-function generateRandomString() {
-  let randomString = [];
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
-  let length = characters.length;
+const generateRandomString = () => {
+  const randomString = [];
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+  const length = characters.length;
   for (let i = 0; i < 6; i++) {
     randomString.push(characters.charAt(Math.floor(Math.random() * length)));
   }
   return randomString.join('');
-}
+};
 
 const createUser = (email, password, users) => {
   const newID = generateRandomString();
@@ -26,20 +26,16 @@ const createUser = (email, password, users) => {
     email,
     password
   };
-  users[newID] = newUser
+  users[newID] = newUser;
   return users[newID];
 };
 
-const fetchUser = (users, email, password) => {
+const authenticateUser = (users, email, password) => {
   for (let id in users) {
     if (users[id].email === email) {
-      if (bcrypt.compareSync(password, users[id].password )) {
+      if (bcrypt.compareSync(password, users[id].password)) {
         return id;
-      } else {
-        console.log("Error: invalid password");
       }
-    } else {
-      console.log("Error: invalid email");
     }
   }
   return null;
@@ -47,7 +43,7 @@ const fetchUser = (users, email, password) => {
 
 module.exports = {
   generateRandomString,
-  userExists,
+  fetchUserByEmail,
   createUser,
-  fetchUser
+  authenticateUser
 };
