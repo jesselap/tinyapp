@@ -1,5 +1,6 @@
 // Requirements
 const express = require("express");
+const methodOverride = require("method-override");
 const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
@@ -22,6 +23,7 @@ app.use(cookieSession({
   keys: ["key1", "key2"]
 }));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride('_method'))
 
 // Database
 const urlDatabase = {};
