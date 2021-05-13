@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 const userExists = (email, users) => {
   for (let user in users) {
     if (users[user].email === email) {
@@ -31,7 +33,7 @@ const createUser = (email, password, users) => {
 const fetchUser = (users, email, password) => {
   for (let id in users) {
     if (users[id].email === email) {
-      if (users[id].password === password) {
+      if (bcrypt.compareSync(password, users[id].password )) {
         return id;
       } else {
         console.log("Error: invalid password");

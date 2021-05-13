@@ -1,11 +1,17 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
-app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
+// Middleware
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.set("view engine", "ejs");
+
+// Helpers
 const {
   generateRandomString,
   userExists,
@@ -13,18 +19,20 @@ const {
   fetchUser
 } = require("./helpers/helpers.js");
 
+// Database
 const urlDatabase = {};
 const users = {};
 
 
 // GETS
+// List of current URL (homepage)
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-// List of current URL (homepage)
+
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
@@ -33,6 +41,7 @@ app.get("/urls", (req, res) => {
   console.log(templateVars.user_id)
   res.render("urls_index", templateVars);
 });
+
 // Create a new URL page
 app.get("/urls/new", (req, res) => {
   const templateVars = {
@@ -44,6 +53,7 @@ app.get("/urls/new", (req, res) => {
   }
   res.render("urls_new", templateVars);
 });
+
 // Editing page for specific URL
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
@@ -69,6 +79,7 @@ app.get("/urls/:shortURL", (req, res) => {
 //     }
 //   } 
 // });
+
 // Link to the URL website
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
@@ -78,6 +89,7 @@ app.get("/u/:shortURL", (req, res) => {
     res.send("Error: Cannot connect");
   }
 });
+
 // Login page
 app.get("/login", (req, res) => {
   const templateVars = {
@@ -85,6 +97,7 @@ app.get("/login", (req, res) => {
   };
   res.render("urls_login", templateVars);
 });
+
 // Register page
 app.get("/register", (req, res) => {
   const templateVars = {
@@ -96,16 +109,17 @@ app.get("/register", (req, res) => {
 
 
 //POSTS
+// Create a new URL
 app.post("/urls", (req, res) => {
   const newShort = generateRandomString()
   urlDatabase[newShort] = {
     longURL: req.body.longURL,
     userID: req.cookies["user_id"]
   };
-  console.log(urlDatabase)
-  console.log("^^^^^^^^^")
   res.redirect(`/urls/${newShort}`);
 });
+
+// Edit an existing URL
 app.post("/urls/:id", (req, res) => {
   const { id } = req.params;
   const { longURL } = req.body;
@@ -116,19 +130,22 @@ app.post("/urls/:id", (req, res) => {
   urlDatabase[id].longURL = longURL;
   res.redirect('/urls');
 });
+
+// Delete an existing URL
 app.post("/urls/:id/delete", (req, res) => {
   const { id } = req.params;
   if (urlDatabase[id].userID !== req.cookies["user_id"]) {
     res.status(403).redirect("/urls");
     return;
   }
-
   delete urlDatabase[id];
-
   res.redirect("/urls");
 });
+
+// Login request
 app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
   const user_id = fetchUser(users, email, password);
   if (!user_id) {
     res.status(403).redirect("/login");
@@ -137,24 +154,27 @@ app.post("/login", (req, res) => {
   res.cookie("user_id", user_id);
   res.redirect("/urls");
 });
+
+// Logout
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/urls");
 });
+
+// Register
 app.post("/register", (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    console.log("Error: missing field");
-    res.status(400).redirect("/register");
+  const email = req.body.email;
+  const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  if (!email || !hashedPassword) {
+    res.status(403).send("<html><body><h1>Please fill both fields.</h1></body></html>");
     return;
   }
   if (userExists(email, users)) {
-    console.log("Error: user already exists");
-    res.status(400).redirect("/register");
+    res.status(403).send("<html><body><h1>That user already exists.</h1></body></html>");
     return;
   }
-  const newUser = createUser(email, password, users);
-  console.log(newUser)
+  const newUser = createUser(email, hashedPassword, users);
   res.cookie("user_id", newUser.newID);
   res.redirect("/urls");
 });
