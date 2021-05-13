@@ -22,9 +22,9 @@
         </tr>
       </thead>
       <tbody>
-        <% if (user_id !== undefined) { %>
+        <% if (userId !== undefined) { %>
          <% for(let url in urls) { %>
-          <% if (urls[url].userID === user_id.newID) { %>
+          <% if (urls[url].userID === userId.newID) { %>
               <tr>
                 <td><%= url %></td>
                 <td><%= urls[url].longURL %></td>
