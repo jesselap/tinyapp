@@ -143,7 +143,7 @@ app.post("/urls", (req, res) => {
 });
 
 // Edit an existing URL
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   if (!users[req.session["user_id"]]) {
     res.status(403).send("<html><body><h1>Please login or register</h1></body></html>");
     return;
