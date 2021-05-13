@@ -159,7 +159,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 // Delete an existing URL
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   if (!users[req.session["user_id"]]) {
     res.status(403).send("<html><body><h1>Please login or register</h1></body></html>");
     return;
