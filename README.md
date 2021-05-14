@@ -9,7 +9,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 !["Screenshot of Create URL page"](https://github.com/jesselap/tinyapp/blob/master/docs/create_url.png?raw=true)
 !["Screenshot of Edit URL page"](https://github.com/jesselap/tinyapp/blob/master/docs/edit_url.png?raw=true)
 !["Screenshot of Register User page"](https://github.com/jesselap/tinyapp/blob/master/docs/register_user.png?raw=true)
-!["Screenshot of My URLs page"](https://github.com/jesselap/tinyapp/blob/master/docs/urls.png?raw=true)
+!["Screenshot of My URLs page"](https://github.com/jesselap/tinyapp/blob/master/docs/urls_list.png?raw=true)
 
 ## Dependencies
 
