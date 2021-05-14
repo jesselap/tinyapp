@@ -13,7 +13,8 @@ const {
   generateRandomString,
   fetchUserByEmail,
   createUser,
-  authenticateUser
+  authenticateUser,
+  getDate
 } = require("./helpers/helpers.js");
 
 // Middleware
@@ -106,7 +107,6 @@ app.get("/login", (req, res) => {
     res.redirect("/urls");
     return;
   }
-  // Remove this line
   const templateVars = {
     userId: users[req.session["user_id"]],
   };
@@ -137,7 +137,8 @@ app.post("/urls", (req, res) => {
   const newShort = generateRandomString();
   urlDatabase[newShort] = {
     longURL: req.body.longURL,
-    userID: req.session["user_id"]
+    userID: req.session["user_id"],
+    date: getDate()
   };
   res.redirect(`/urls/${newShort}`);
 });

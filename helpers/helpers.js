@@ -41,9 +41,16 @@ const authenticateUser = (users, email, password) => {
   return null;
 };
 
+const getDate = () => {
+  const today = new Date();
+  const date = `${today.getFullYear()}/${(today.getMonth() + 1)}/${today.getDate()}`
+  return date;
+};
+
 module.exports = {
   generateRandomString,
   fetchUserByEmail,
   createUser,
-  authenticateUser
+  authenticateUser,
+  getDate
 };
